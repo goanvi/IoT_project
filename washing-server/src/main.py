@@ -28,12 +28,14 @@ async def on_connect(websocket, path, address):
         async with Client(address) as client:
             async for message in websocket:
                 print(f"Client[{client_id}]: {message}")
-                if message['type'] == 'get':
-                    await websocket.send(machines)
+                message = json.loads(message)
+                if message["type"] == 'get':
+                    await websocket.send(json.dumps(machines))
+                    print("Machines sent")
                 else:
                     start = datetime.now()
                     machine_id = message["machine_id"]
-                    await client.publish(f"machine/command/{machine_id}", message)
+                    await client.publish(f"machine/command/{machine_id}", json.dumps(message))
                     end = datetime.now()
                     REQUEST_TIME_SUMMARY.observe((end - start).microseconds)
     except ConnectionClosedError:
@@ -76,17 +78,18 @@ async def on_ticket_create(address):
             async for message in messages:
                 status = json.loads(message.payload.decode("utf-8"))
                 machine_id = status["machine_id"]
+                ticket_id = status["ticket_id"]
                 DRINK_TYPE_HIST.observe(status["drink_id"])
                 await save_order(status, database_connection)
-                print(f"Произошла покупка на кофемашине: {machine_id}")
+                print(f"Произошла покупка на кофемашине {machine_id}, покупка {ticket_id}")
     await database_connection.close()
 
 
 async def save_order(order: dict, conn):
     try:
         await conn.execute('INSERT INTO "tickets" VALUES ($1, $2, $3, $4, $5, $6)',
-                           order["machine_id"],
                            order["ticket_id"],
+                           order["machine_id"],
                            order["drink_id"],
                            datetime.strptime(order["created_at"], '%Y-%m-%d %H:%M:%S'),
                            order["milk"],

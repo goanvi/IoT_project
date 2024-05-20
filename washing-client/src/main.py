@@ -14,15 +14,17 @@ async def send(websocket, client_id):
             "type": "get"
         }))
         response = await websocket.recv()
-        machine = random.choice(response["machines"])
-        await websocket.send(json.dumps({
-            "type": "get",
-            "machine_id": machine,
-            "command": "test",
-            "created_at": str(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
-        }))
-        print("Command sent")
-        await asyncio.sleep(15)
+        response = json.loads(response)
+        if len(response) > 0:
+            machine = random.choice(response)
+            await websocket.send(json.dumps({
+                "type": "command",
+                "machine_id": machine,
+                "command": "test",
+                "created_at": str(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+            }))
+            print("Command sent")
+        await asyncio.sleep(30)
 
 
 async def main(address):
