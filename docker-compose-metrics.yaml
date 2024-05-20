@@ -1,0 +1,51 @@
+version: "3.7"
+
+services:
+  mosquitto:
+    image: eclipse-mosquitto
+    hostname: mosquitto
+    container_name: mosquitto
+    restart: unless-stopped
+    ports:
+      - "1883:1883"
+      - "9001:9001"
+    network_mode: host
+    volumes:
+      - ./mosquitto:/etc/mosquitto
+#      - ./mosquitto/mosquitto.conf:/mosquitto/config/mosquitto.conf
+    logging:
+      options:
+        max-size: 50m
+
+  prometheus:
+    image: prom/prometheus
+    container_name: prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+    network_mode: host
+    restart: unless-stopped
+    volumes:
+      - ./prometheus:/etc/prometheus
+      - prom_data:/prometheus
+    logging:
+      options:
+        max-size: 50m
+
+  grafana:
+    image: grafana/grafana
+    container_name: grafana
+    network_mode: host
+    restart: unless-stopped
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=13t1Y04Mtt
+    volumes:
+      - ./grafana:/etc/grafana/provisioning/datasources
+      - grafana_data:/var/lib/grafana
+    logging:
+      options:
+        max-size: 50m
+
+volumes:
+  prom_data:
+  grafana_data:
