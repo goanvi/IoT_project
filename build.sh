@@ -1,3 +1,3 @@
-docker build ./washing-server -t se.ifmo.ru/washing-server:latest
-docker build ./washing-client -t se.ifmo.ru/washing-client:latest
-docker build ./washing-machine -t se.ifmo.ru/washing-machine:latest
+docker build ./coffee-server -t se.ifmo.ru/coffee-server:latest
+docker build ./coffee-client -t se.ifmo.ru/coffee-client:latest
+docker build ./coffee-machine -t se.ifmo.ru/coffee-machine:latest

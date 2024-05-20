@@ -16,7 +16,7 @@ services:
         max-size: 50m
 
   server:
-    image: "se.ifmo.ru/washing-server:latest"
+    image: "se.ifmo.ru/coffee-server:latest"
     network_mode: host
     command: localhost
     depends_on:
