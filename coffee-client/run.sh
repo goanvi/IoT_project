@@ -9,5 +9,5 @@ if [ -z "$num_containers" ]; then
 fi
 
 for ((i=1; i<=$num_containers; i++)); do
-    docker run -d --name washing_client_$i se.ifmo.ru/washing-client $server_address
+    docker run -d --name coffee_client_$i se.ifmo.ru/coffee-client $server_address
 done
